@@ -1,3 +1,9 @@
+XXXXX
+XS__X
+X___X
+X__GX
+XXXXX
+
 XXXXXXXXXX
 X___XX_X_X
 X_X__X___X
@@ -7,12 +13,6 @@ X___XX_X_X
 X_X__X_X_X
 X__G_X___X
 XXXXXXXXXX
-
-XXXXX
-XS__X
-X___X
-X__GX
-XXXXX
 
 XXXXXXXX
 XS_____X

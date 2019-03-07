@@ -239,7 +239,7 @@ def print_list_3d(lis_3d):
 
 
 def main():
-    input_file_name_updown = 'path_finding_a.txt'
+    input_file_name_up_down = 'path_finding_a.txt'
     input_file_name_diagonal = 'path_finding_b.txt'
     output_file_name_up_down = 'path_finding_a_out.txt'
     output_file_name_diagonal = 'path_finding_b_out.txt'
@@ -250,7 +250,7 @@ def main():
     file = open(output_file_name_diagonal, 'w+')
     file.close()
 
-    input_mazes_up_down = read_file(input_file_name_updown)
+    input_mazes_up_down = read_file(input_file_name_up_down)
     num_input_mazes_up_down = len(input_mazes_up_down)
     if num_input_mazes_up_down == 0:
         print("No input mazes for agent to be allowed to only move up, down, left and right.")
@@ -291,7 +291,7 @@ def main():
     else:
         print("Finding solutions to mazes when also allowed to move diagonally.")
         for i in range(num_input_mazes_diagonal):
-            maze = input_mazes_up_down[i]
+            maze = input_mazes_diagonal[i]
             path_finding_diagonal = PathFinding(maze)
             print("Finding a solution for maze number", i, "with dimension", len(maze), "by", len(maze[0]))
             st = time.time()
