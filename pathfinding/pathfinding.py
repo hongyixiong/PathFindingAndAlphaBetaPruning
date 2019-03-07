@@ -257,8 +257,9 @@ def main():
     else:
         print("Finding solutions to mazes when allowed to move up, down, left and right.")
         for i in range(num_input_mazes_up_down):
-            print("Finding a solution for maze number", i)
-            path_finding_up_down = PathFinding(input_mazes_up_down[i])
+            maze = input_mazes_up_down[i]
+            path_finding_up_down = PathFinding(maze)
+            print("Finding a solution for maze number", i, "with dimension", len(maze), "by", len(maze[0]))
             st = time.time()
             # call the algorithm to get path
             path_up_down_greedy = path_finding_up_down.greedy_search_up_down()
@@ -269,6 +270,7 @@ def main():
             # write maze to file
             write_to_file(result_maze, output_file_name_up_down)
             print("    the time used for greedy algorithm is", time.time() - st)
+
             st = time.time()
             # call the algorithm to get path
             path_up_down_a_star = path_finding_up_down.a_star_search_up_down()
@@ -289,28 +291,30 @@ def main():
     else:
         print("Finding solutions to mazes when also allowed to move diagonally.")
         for i in range(num_input_mazes_diagonal):
-            print("Finding a solution for maze number", i)
-            path_finding_diagonal = PathFinding(input_mazes_up_down[i])
+            maze = input_mazes_up_down[i]
+            path_finding_diagonal = PathFinding(maze)
+            print("Finding a solution for maze number", i, "with dimension", len(maze), "by", len(maze[0]))
             st = time.time()
             # call the algorithm to get path
             path_diagonal_greedy = path_finding_diagonal.greedy_search_diagonal()
             # generate result maze from path
             result_maze = path_finding_diagonal.get_result_maze(path_diagonal_greedy)
             # write algorithm name to file
-            append_line_to_file('Greedy', output_file_name_up_down)
+            append_line_to_file('Greedy', output_file_name_diagonal)
             # write maze to file
-            write_to_file(result_maze, output_file_name_up_down)
+            write_to_file(result_maze, output_file_name_diagonal)
             print("    the time used for greedy algorithm is", time.time() - st)
+
             st = time.time()
             # call the algorithm to get path
             path_diagonal_a_star = path_finding_diagonal.a_star_search_diagonal()
             # generate result maze from path
             result_maze = path_finding_diagonal.get_result_maze(path_diagonal_a_star)
             # write algorithm name to file
-            append_line_to_file('A*', output_file_name_up_down)
+            append_line_to_file('A*', output_file_name_diagonal)
             # write maze to file
-            write_to_file(result_maze, output_file_name_up_down)
-            append_line_to_file('', output_file_name_up_down)
+            write_to_file(result_maze, output_file_name_diagonal)
+            append_line_to_file('', output_file_name_diagonal)
             print("    the time used for A* algorithm is", time.time() - st)
 
 
