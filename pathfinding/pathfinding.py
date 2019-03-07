@@ -4,7 +4,7 @@ import time
 class PathFinding:
     def __init__(self, maze):
         self.maze = maze
-        self.start_pos = []
+        self.start_pos = []  # represented by an ordered list such as [x, y]
         self.goal_pos = []
         self.initialize_start_goal_states()
 
@@ -22,16 +22,18 @@ class PathFinding:
 
     def greedy_search_up_down(self):
         """
-        Find the path from start to goal using greedy search in a maze where you can move up, down, left, or right.
-        For example: [[a1, b1], [a2, b2]] means that we take the path Start -> [a1, b1] -> [a2, b2] -> Goal.
+        Find the path from start to goal using greedy search in a maze where you can only move up, down, left, or right.
+        For example: [[Start_x, Start_y],[a, b], [Goal_x, Goal_y]] means that the agent takes the path
+                    Start -> [a, b] -> Goal.
         :return: a list of ordered lists containing states of the path.
         """
         return []
 
     def a_star_search_up_down(self):
         """
-        Find the path from start to goal using A* search in a maze where you can move up, down, left, or right.
-        For example: [[a1, b1], [a2, b2]] means that we take the path Start -> [a1, b1] -> [a2, b2] -> Goal.
+        Find the path from start to goal using A* search in a maze where you can only move up, down, left, or right.
+        For example: [[Start_x, Start_y],[a, b], [Goal_x, Goal_y]] means that the agent takes the path
+                    Start -> [a, b] -> Goal.
         :return: a list of ordered lists containing states of the path.
         """
         return []
@@ -39,7 +41,8 @@ class PathFinding:
     def greedy_search_diagonal(self):
         """
         Find the path from start to goal using greedy search in a maze where you can also move diagonally.
-        For example: [[a1, b1], [a2, b2]] means that we take the path Start -> [a1, b1] -> [a2, b2] -> Goal.
+        For example: [[Start_x, Start_y],[a, b], [Goal_x, Goal_y]] means that the agent takes the path
+                    Start -> [a, b] -> Goal.
         :return: a list of ordered lists containing states of the path.
         """
         return []
@@ -47,7 +50,8 @@ class PathFinding:
     def a_star_search_diagonal(self):
         """
         Find the path from start to goal using A* search in a maze where you can also move diagonally.
-        For example: [[a1, b1], [a2, b2]] means that we take the path Start -> [a1, b1] -> [a2, b2] -> Goal.
+        For example: [[Start_x, Start_y],[a, b], [Goal_x, Goal_y]] means that the agent takes the path
+                    Start -> [a, b] -> Goal.
         :return: a list of ordered lists containing states of the path.
         """
         return []
@@ -156,7 +160,7 @@ class PathFinding:
         # do some basic error checking of the result path here
         # if not self.is_adjacent_by_chebyshev(path[0][0], path[0][1], self.start_pos[0], self.start_pos[1]):
         #     print('Error 1: Some error must have occurred.')
-        # if not self.is_adjacent_by_chebyshev(path[len(path)-1][0], path[len(path)-1][0][1],
+        # if not self.is_adjacent_by_chebyshev(path[len(path)-1][0], path[len(path)-1][1],
         #                                      self.goal_pos[0], self.goal_pos[1]):
         #     print('Error 2: Some error must have occurred.')
         # for i in range(len(path) - 1):
