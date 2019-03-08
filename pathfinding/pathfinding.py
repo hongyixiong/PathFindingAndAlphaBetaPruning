@@ -264,7 +264,6 @@ def main():
             # call the algorithm to get path
             path_up_down_greedy = path_finding_up_down.greedy_search_up_down()
             # generate result maze from path
-            """
             result_maze = path_finding_up_down.get_result_maze(path_up_down_greedy)
             # write algorithm name to file
             append_line_to_file('Greedy', output_file_name_up_down)
@@ -284,8 +283,7 @@ def main():
             append_line_to_file('', output_file_name_up_down)
             print("    the time used for A* algorithm is", time.time() - st)
     print()
-    
-    
+
     input_mazes_diagonal = read_file(input_file_name_diagonal)
     num_input_mazes_diagonal = len(input_mazes_diagonal)
     if num_input_mazes_diagonal == 0:
@@ -319,5 +317,5 @@ def main():
             append_line_to_file('', output_file_name_diagonal)
             print("    the time used for A* algorithm is", time.time() - st)
 
-"""
+
 main()
