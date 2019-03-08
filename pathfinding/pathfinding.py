@@ -1,5 +1,5 @@
 import time
-
+import heapq
 
 class PathFinding:
     def __init__(self, maze):
@@ -20,6 +20,24 @@ class PathFinding:
                 elif self.is_goal(i, j):
                     self.goal_pos = [i, j]
 
+    def get_neighbors_up_down(current):
+        """
+        Find neighbors for the current point
+        :return: a list of neighbors for current point
+        """
+        all_neighbor=[]
+        all_neighbor.append((current[0] - 1, current[1]))
+        all_neighbor.append((current[0] + 1, current[1]))
+        all_neighbor.append((current[0], current[1] - 1))
+        all_neighbor.append((current[0], current[1] + 1))
+
+        neighbot=[]
+        for i in all_neighbor:
+            if isopen
+                """
+                Working on
+                """
+
     def greedy_search_up_down(self):
         """
         Find the path from start to goal using greedy search in a maze where you can only move up, down, left, or right.
@@ -27,6 +45,20 @@ class PathFinding:
                     Start -> [a, b] -> Goal.
         :return: a list of ordered lists containing states of the path.
         """
+        heap = []
+        heapq.heappush(heap, (self.start_pos, 0))
+        game_from = {}
+        game_from[0]= null
+
+        while len(heap)!=0:
+            current = heapq.heappop()
+
+            if current[1] == self.goal_pos: # break if goal found
+                break
+        """
+        Still Working On
+        """
+
         return []
 
     def a_star_search_up_down(self):
