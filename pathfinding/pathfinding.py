@@ -20,7 +20,7 @@ class PathFinding:
                 elif self.is_goal(i, j):
                     self.goal_pos = [i, j]
 
-    def get_neighbors_up_down(current):
+    def get_neighbors_up_down(self, current):
         """
         Find neighbors for the current point
         :return: a list of neighbors for current point
@@ -31,12 +31,11 @@ class PathFinding:
         all_neighbor.append((current[0], current[1] - 1))
         all_neighbor.append((current[0], current[1] + 1))
 
-        neighbot=[]
+        neighbor=[]
         for i in all_neighbor:
-            if isopen
-                """
-                Working on
-                """
+            if self.is_open(i[0], i[1]):
+                neighbor.append(i)
+        return neighbor
 
     def greedy_search_up_down(self):
         """
@@ -45,19 +44,28 @@ class PathFinding:
                     Start -> [a, b] -> Goal.
         :return: a list of ordered lists containing states of the path.
         """
+        print("Start Finding - Greedy Updown")
+
         heap = []
         heapq.heappush(heap, (self.start_pos, 0))
-        game_from = {}
-        game_from[0]= null
+        game_from = []
 
-        while len(heap)!=0:
-            current = heapq.heappop()
-
+        while len(heap) != 0:
+            current = heapq.heappop(heap)
+            print("Current Working On: ", current)
+            current_place = current[0]
             if current[1] == self.goal_pos: # break if goal found
                 break
+
+            for next_point in self.get_neighbors_up_down(current_place):
+                if next_point not in game_from:
+                    priority = self.manhattan_heuristic(next_point[0], next_point[1])
+                    heapq.heappush(heap, (next_point, priority))
+                    game_from.append(next_point)
         """
         Still Working On
         """
+        print(game_from)
 
         return []
 
@@ -296,6 +304,7 @@ def main():
             # call the algorithm to get path
             path_up_down_greedy = path_finding_up_down.greedy_search_up_down()
             # generate result maze from path
+            """
             result_maze = path_finding_up_down.get_result_maze(path_up_down_greedy)
             # write algorithm name to file
             append_line_to_file('Greedy', output_file_name_up_down)
@@ -315,7 +324,8 @@ def main():
             append_line_to_file('', output_file_name_up_down)
             print("    the time used for A* algorithm is", time.time() - st)
     print()
-
+    
+    
     input_mazes_diagonal = read_file(input_file_name_diagonal)
     num_input_mazes_diagonal = len(input_mazes_diagonal)
     if num_input_mazes_diagonal == 0:
@@ -349,5 +359,5 @@ def main():
             append_line_to_file('', output_file_name_diagonal)
             print("    the time used for A* algorithm is", time.time() - st)
 
-
+"""
 main()
