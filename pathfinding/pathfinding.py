@@ -5,74 +5,61 @@ import time
 class PathFinding:
     def __init__(self, maze):
         self.maze = maze
-        self.start_pos = []  # represented by an ordered list such as [x, y]
-        self.goal_pos = []
+        self.start_state = None  # represented by an ordered pair (x, y)
+        self.goal_state = None
         self.initialize_start_goal_states()
 
     def initialize_start_goal_states(self):
         """
         Finds the location of start and goal states of the maze, represented by ordered lists
         consisting of row and column positions, that is, [a, b] represents a state at row a and column b.
+        Sets the start and goal states of self.
         """
         for i in range(len(self.maze)):
             for j in range(len(self.maze[i])):
+                state = (i, j)
                 if self.maze[i][j] == 'S':
-                    self.start_pos = [i, j]
-                elif self.is_goal(i, j):
-                    self.goal_pos = [i, j]
-
-    def get_neighbors_up_down(self, current):
-        """
-        Find neighbors for the current point
-        :return: a list of neighbors for current point
-        """
-        all_neighbor = [[current[0] - 1, current[1]],
-                        [current[0] + 1, current[1]],
-                        [current[0], current[1] - 1],
-                        [current[0], current[1] + 1]]
-
-        neighbor = []
-        for i in all_neighbor:
-            if self.is_open(i[0], i[1]):
-                neighbor.append(i)
-        return neighbor
+                    self.start_state = state
+                elif self.is_goal(state):
+                    self.goal_state = state
 
     def greedy_search_up_down(self):
         """
         Find the path from start to goal using greedy search in a maze where you can only move up, down, left, or right.
-        For example: [[Start_x, Start_y],[a, b], [Goal_x, Goal_y]] means that the agent takes the path
-                    Start -> [a, b] -> Goal.
+        For example: [(Start_x, Start_y),(a, b), (Goal_x, Goal_y)] means that the agent takes the path
+                    Start -> (a, b) -> Goal.
         :return: a list of ordered lists containing states of the path.
         """
         print("Start Finding - Greedy Updown")
 
-        heap = []
-        heapq.heappush(heap, (self.start_pos, 0))
-        game_from = []
+        frontier = []
+        heapq.heappush(frontier, (self.start_state, 0))
+        came_from = []
 
-        while len(heap) != 0:
-            current = heapq.heappop(heap)
+        while len(frontier) != 0:
+            current = heapq.heappop(frontier)
+            # todo: remove testing
             print("Current Working On: ", current)
             current_place = current[0]
-            if current[1] == self.goal_pos:  # break if goal found
+            if current[1] == self.goal_state:  # break if goal found
                 break
 
-            for next_point in self.get_neighbors_up_down(current_place):
-                if next_point not in game_from:
-                    priority = self.manhattan_heuristic(next_point[0], next_point[1])
-                    heapq.heappush(heap, (next_point, priority))
-                    game_from.append(next_point)
+            for next_point in self.get_open_neighbors_up_down(current_place):
+                if next_point not in came_from:
+                    priority = self.manhattan_heuristic(next_point)
+                    heapq.heappush(frontier, (next_point, priority))
+                    came_from.append(next_point)
         # todo: Still Working On
 
-        print(game_from)
+        print(came_from)
 
         return []
 
     def a_star_search_up_down(self):
         """
         Find the path from start to goal using A* search in a maze where you can only move up, down, left, or right.
-        For example: [[Start_x, Start_y],[a, b], [Goal_x, Goal_y]] means that the agent takes the path
-                    Start -> [a, b] -> Goal.
+        For example: [(Start_x, Start_y),(a, b), (Goal_x, Goal_y)] means that the agent takes the path
+                    Start -> (a, b) -> Goal.
         :return: a list of ordered lists containing states of the path.
         """
         return []
@@ -80,8 +67,8 @@ class PathFinding:
     def greedy_search_diagonal(self):
         """
         Find the path from start to goal using greedy search in a maze where you can also move diagonally.
-        For example: [[Start_x, Start_y],[a, b], [Goal_x, Goal_y]] means that the agent takes the path
-                    Start -> [a, b] -> Goal.
+        For example: [(Start_x, Start_y),(a, b), (Goal_x, Goal_y)] means that the agent takes the path
+                    Start -> (a, b) -> Goal.
         :return: a list of ordered lists containing states of the path.
         """
         return []
@@ -89,118 +76,136 @@ class PathFinding:
     def a_star_search_diagonal(self):
         """
         Find the path from start to goal using A* search in a maze where you can also move diagonally.
-        For example: [[Start_x, Start_y],[a, b], [Goal_x, Goal_y]] means that the agent takes the path
-                    Start -> [a, b] -> Goal.
+        For example: [(Start_x, Start_y),(a, b), (Goal_x, Goal_y)] means that the agent takes the path
+                    Start -> (a, b) -> Goal.
         :return: a list of ordered lists containing states of the path.
         """
+        frontier = []
+        heapq.heappush(frontier, self.start_state)
+        came_from = dict()
+        cost_so_far = dict()
+        came_from[self.start_state] = None
+        cost_so_far[self.start_state] = 0
+
+        # while not len(frontier) == 0:
+        #     current = heapq.heappop(frontier)
         return []
 
-    def manhattan_heuristic(self, x, y):
+    def manhattan_heuristic(self, state):
         """
-        Calculates the Manhattan heuristic at the state [x, y].
+        Calculates the Manhattan heuristic at the state (x, y).
         This is the Manhattan distance between the given state and the goal state.
-        :param x: row index
-        :param y: column index
-        :return: a value representing the Manhattan heuristic of at given state.
-        """
-        return self.manhattan_distance(x, y, self.goal_pos[0], self.goal_pos[1])
 
-    def manhattan_distance(self, x1, y1, x2, y2):
+        :param state: an ordered pair as a tuple (x, y)
+        :return: a value representing the Manhattan heuristic of the given state.
         """
-        Calculates the Manhattan distance between [x1, y1] and [x2, y2]
-        :param x1: row index of first state
-        :param y1: column index of first state
-        :param x2: row index of second state
-        :param y2: column index of second state
+        return self.manhattan_distance(state, self.goal_state)
+
+    def manhattan_distance(self, state1, state2):
+        """
+        Calculates the Manhattan distance between state1 (x1, y1) and state2 (x2, y2)
+
+        :param state1: first ordered pair in the form (x1, y1)
+        :param state2: second ordered pair in the form (x2, y2)
         :return: the Manhattan distance between the states.
         """
-        return abs(x1 - x2) + abs(y1 - y2)
+        return abs(state1[0] - state2[0]) + abs(state1[1] - state2[1])
 
-    def chebyshev_heuristic(self, x, y):
+    def chebyshev_heuristic(self, state):
         """
-        Calculates the Chebyshev heuristic at the state [x, y].
+        Calculates the Chebyshev heuristic at the state (x, y).
         This is the Chebyshev distance between the given state and the goal state.
-        :param x: x index
-        :param y: column index
-        :return: a value representing the Chebyshev heuristic of at given state.
-        """
-        return self.chebyshev_distance(x, y, self.goal_pos[0], self.goal_pos[1])
 
-    def chebyshev_distance(self, x1, y1, x2, y2):
+        :param state: an ordered pair as a tuple (x, y)
+        :return: the value of the Chebyshev heuristic of at given state.
         """
-        Calculates the Chebyshev distance between [x1, y1] and [x2, y2]
-        :param x1: row index of first state
-        :param y1: column index of first state
-        :param x2: row index of second state
-        :param y2: column index of second state
+        return self.chebyshev_distance(state, self.goal_state)
+
+    def chebyshev_distance(self, state1, state2):
+        """
+        Calculates the Chebyshev distance between state1 (x1, y1) and state2 (x2, y2)
+
+        :param state1: first ordered pair in the form (x1, y1)
+        :param state2: second ordered pair in the form (x2, y2)
         :return: the Chebyshev distance between the states.
         """
-        return max(abs(x1 - x2), abs(y1 - y2))
+        return max(abs(state1[0] - state2[0]), abs(state1[1] - state2[1]))
 
-    def is_adjacent_by_manhattan(self, row1, col1, row2, col2):
+    def get_open_neighbors_up_down(self, state):
+        """
+        Find open neighbors for the state state
+        :return: a list of open neighbors for state point
+        """
+        all_neighbors = [(state[0] - 1, state[1]),
+                         (state[0] + 1, state[1]),
+                         (state[0], state[1] - 1),
+                         (state[0], state[1] + 1)]
+
+        open_neighbors = []
+        for neighbour in all_neighbors:
+            if self.is_open(neighbour):
+                open_neighbors.append(neighbour)
+        return open_neighbors
+
+    def is_adjacent_by_manhattan(self, state1, state2):
         """
         Determines whether two states are adjacent calculated by Manhattan distance.
         The are adjacent if the Manhattan distance is 1.
-        :param row1: row index of first state
-        :param col1: column index of first state
-        :param row2: row index of second state
-        :param col2: column index of second state
+
+        :param state1: first ordered pair in the form (x1, y1)
+        :param state2: second ordered pair in the form (x2, y2)
         :return: True if they are adjacent by Manhattan distance, False is they are not adjacent.
         """
-        return self.manhattan_distance(row1, col1, row2, col2) == 1
+        return self.manhattan_distance(state1, state2) == 1
 
-    def is_adjacent_by_chebyshev(self, row1, col1, row2, col2):
+    def is_adjacent_by_chebyshev(self, state1, state2):
         """
         Determines whether two states are adjacent calculated by Chebyshev distance.
         The are adjacent if the Chebyshev distance is 1.
-        :param row1: row index of first state
-        :param col1: column index of first state
-        :param row2: row index of second state
-        :param col2: column index of second state
+
+        :param state1: first ordered pair in the form (x1, y1)
+        :param state2: second ordered pair in the form (x2, y2)
         :return: True if they are adjacent by Chebyshev distance, False is they are not adjacent.
         """
-        return self.chebyshev_distance(row1, col1, row2, col2) == 1
+        return self.chebyshev_distance(state1, state2) == 1
 
-    def is_goal(self, row, col):
+    def is_goal(self, state):
         """
         Determines whether a state at the given row and column is a goal state, that is, equals 'G'.
-        :param row: row index
-        :param col: column index
+        :param state: an ordered pair as a tuple (x, y) representing the position
         :return: a boolean indicating whether the state is a goal state.
         """
-        return self.maze[row][col] == 'G'
+        return self.maze[state[0]][state[1]] == 'G'
 
-    def is_open(self, row, col):
+    def is_open(self, state):
         """
         Determines whether a state at the given row and column is open, that is, equals '_', 'S', or 'G'.
-        :param row: row index
-        :param col: column index
+        :param state: an ordered pair as a tuple (x, y) representing the position
         :return: a boolean indicating whether the state is open.
         """
-        value = self.maze[row][col]
+        value = self.maze[state[0]][state[1]]
         return value == '_' or value == 'S' or value == 'G'
 
-    def is_blocked(self, row, col):
+    def is_blocked(self, state):
         """
         Determines whether a state at the given row and column is blocked, that is, equals 'X'.
-        :param row: row index
-        :param col: column index
+        :param state: an ordered pair as a tuple (x, y) representing the position
         :return: a boolean indicating whether the state is blocked.
         """
-        return self.maze[row][col] == 'X'
+        return self.maze[state[0]][state[1]] == 'X'
 
     def get_result_maze(self, path):
         """
         Modify the maze such that the path taken between start and goal state is marked by 'P'.
-        :param path: a list of ordered lists containing states of the path.
+        :param path: a list of ordered pairs containing states of the path.
         :return: The maze with the path taken marked by 'P'
         """
         # todo: remove basic error checks
         # do some basic error checking of the result path here
-        # if not self.is_adjacent_by_chebyshev(path[0][0], path[0][1], self.start_pos[0], self.start_pos[1]):
+        # if not self.is_adjacent_by_chebyshev(path[0][0], path[0][1], self.start_state[0], self.start_state[1]):
         #     print('Error 1: Some error must have occurred.')
         # if not self.is_adjacent_by_chebyshev(path[len(path)-1][0], path[len(path)-1][1],
-        #                                      self.goal_pos[0], self.goal_pos[1]):
+        #                                      self.goal_state[0], self.goal_state[1]):
         #     print('Error 2: Some error must have occurred.')
         # for i in range(len(path) - 1):
         #     if not self.is_adjacent_by_chebyshev(path[i][0], path[i][1], path[i+1][0], path[i+1][1]):
@@ -236,8 +241,6 @@ def write_to_file(lis_2d, file_name):
     """
     file = open(file_name, 'a+')
     for row in range(0, len(lis_2d)):
-        # needed to add 1 to x because row and column numbers on a chess board
-        # are 1 higher than Python list indices.
         new_line = ''.join(lis_2d[row])
         file.write(new_line + '\n')
     file.close()
