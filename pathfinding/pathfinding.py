@@ -1,3 +1,4 @@
+import heapq
 import time
 
 
@@ -20,6 +21,22 @@ class PathFinding:
                 elif self.is_goal(i, j):
                     self.goal_pos = [i, j]
 
+    def get_neighbors_up_down(self, current):
+        """
+        Find neighbors for the current point
+        :return: a list of neighbors for current point
+        """
+        all_neighbor = [[current[0] - 1, current[1]],
+                        [current[0] + 1, current[1]],
+                        [current[0], current[1] - 1],
+                        [current[0], current[1] + 1]]
+
+        neighbor = []
+        for i in all_neighbor:
+            if self.is_open(i[0], i[1]):
+                neighbor.append(i)
+        return neighbor
+
     def greedy_search_up_down(self):
         """
         Find the path from start to goal using greedy search in a maze where you can only move up, down, left, or right.
@@ -27,6 +44,28 @@ class PathFinding:
                     Start -> [a, b] -> Goal.
         :return: a list of ordered lists containing states of the path.
         """
+        print("Start Finding - Greedy Updown")
+
+        heap = []
+        heapq.heappush(heap, (self.start_pos, 0))
+        game_from = []
+
+        while len(heap) != 0:
+            current = heapq.heappop(heap)
+            print("Current Working On: ", current)
+            current_place = current[0]
+            if current[1] == self.goal_pos:  # break if goal found
+                break
+
+            for next_point in self.get_neighbors_up_down(current_place):
+                if next_point not in game_from:
+                    priority = self.manhattan_heuristic(next_point[0], next_point[1])
+                    heapq.heappush(heap, (next_point, priority))
+                    game_from.append(next_point)
+        # todo: Still Working On
+
+        print(game_from)
+
         return []
 
     def a_star_search_up_down(self):
