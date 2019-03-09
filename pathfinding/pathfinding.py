@@ -1,3 +1,4 @@
+import copy
 import heapq
 import time
 
@@ -26,70 +27,99 @@ class PathFinding:
     def greedy_search_up_down(self):
         """
         Find the path from start to goal using greedy search in a maze where you can only move up, down, left, or right.
-        For example: [(Start_x, Start_y),(a, b), (Goal_x, Goal_y)] means that the agent takes the path
-                    Start -> (a, b) -> Goal.
-        :return: a list of ordered lists containing states of the path.
+        The path is represented by a map from states to its previous state.
+        Example: if came_from[(x_1, y_1)] = (x_2, y_2) and came_from[(x_2, y_2)] = (x_3, y_3),
+                 then the path should be [(x_3, y_3), (x_2, y_2), x_1, y_1)]
+        :return: a map from state to which state it came from.
         """
         print("Start Finding - Greedy Updown")
 
         frontier = []
+        # todo: syntax is (priority, item)
         heapq.heappush(frontier, (self.start_state, 0))
         came_from = []
 
         while len(frontier) != 0:
             current = heapq.heappop(frontier)
             # todo: remove testing
-            print("Current Working On: ", current)
+            # print("Current Working On: ", current)
             current_place = current[0]
             if current[1] == self.goal_state:  # break if goal found
                 break
 
-            for next_point in self.get_open_neighbors_up_down(current_place):
-                if next_point not in came_from:
-                    priority = self.manhattan_heuristic(next_point)
-                    heapq.heappush(frontier, (next_point, priority))
-                    came_from.append(next_point)
+            for next_state in self.get_open_neighbours_up_down(current_place):
+                if next_state not in came_from:
+                    priority = self.manhattan_heuristic(next_state)
+                    heapq.heappush(frontier, (next_state, priority))
+                    came_from.append(next_state)
         # todo: Still Working On
-
         print(came_from)
-
-        return []
+        return came_from
 
     def a_star_search_up_down(self):
         """
         Find the path from start to goal using A* search in a maze where you can only move up, down, left, or right.
-        For example: [(Start_x, Start_y),(a, b), (Goal_x, Goal_y)] means that the agent takes the path
-                    Start -> (a, b) -> Goal.
-        :return: a list of ordered lists containing states of the path.
+        The path is represented by a map from states to its previous state.
+        Example: if came_from[(x_1, y_1)] = (x_2, y_2) and came_from[(x_2, y_2)] = (x_3, y_3),
+                 then the path should be [(x_3, y_3), (x_2, y_2), x_1, y_1)]
+        :return: a map from state to which state it came from.
         """
-        return []
+        came_from = dict()
+        return came_from
 
     def greedy_search_diagonal(self):
         """
         Find the path from start to goal using greedy search in a maze where you can also move diagonally.
-        For example: [(Start_x, Start_y),(a, b), (Goal_x, Goal_y)] means that the agent takes the path
-                    Start -> (a, b) -> Goal.
-        :return: a list of ordered lists containing states of the path.
+        The path is represented by a map from states to its previous state.
+        Example: if came_from[(x_1, y_1)] = (x_2, y_2) and came_from[(x_2, y_2)] = (x_3, y_3),
+                 then the path should be [(x_3, y_3), (x_2, y_2), x_1, y_1)]
+        :return: a map from state to which state it came from.
         """
-        return []
+        frontier = []
+        heapq.heappush(frontier, (0, self.start_state))
+        came_from = dict()
+        came_from[self.start_state] = None
+
+        while len(frontier) > 0:
+            current = heapq.heappop(frontier)
+            current_state = current[1]
+            if self.is_goal(current_state):
+                break
+            for next_state in self.get_open_neighbours_diagonal(current_state):
+                if next_state not in came_from:
+                    priority = self.chebyshev_heuristic(next_state)
+                    heapq.heappush(frontier, (priority, next_state))
+                    came_from[next_state] = current_state
+        return came_from
 
     def a_star_search_diagonal(self):
         """
         Find the path from start to goal using A* search in a maze where you can also move diagonally.
-        For example: [(Start_x, Start_y),(a, b), (Goal_x, Goal_y)] means that the agent takes the path
-                    Start -> (a, b) -> Goal.
-        :return: a list of ordered lists containing states of the path.
+        The path is represented by a map from states to their previous state.
+        Example: if came_from[(x_1, y_1)] = (x_2, y_2) and came_from[(x_2, y_2)] = (x_3, y_3),
+                 then the path should be [(x_3, y_3), (x_2, y_2), x_1, y_1)]
+        :return: a map from states to their previous state
         """
         frontier = []
-        heapq.heappush(frontier, self.start_state)
+        heapq.heappush(frontier, (0, self.start_state))
         came_from = dict()
         cost_so_far = dict()
         came_from[self.start_state] = None
         cost_so_far[self.start_state] = 0
 
-        # while not len(frontier) == 0:
-        #     current = heapq.heappop(frontier)
-        return []
+        while len(frontier) > 0:
+            current = heapq.heappop(frontier)
+            current_state = current[1]
+            if self.is_goal(current_state):
+                break
+            for next_state in self.get_open_neighbours_diagonal(current_state):
+                new_cost = cost_so_far[current_state] + 1
+                if next_state not in cost_so_far or new_cost < cost_so_far[next_state]:
+                    cost_so_far[next_state] = new_cost
+                    priority = new_cost + self.chebyshev_heuristic(next_state)
+                    heapq.heappush(frontier, (priority, next_state))
+                    came_from[next_state] = current_state
+        return came_from
 
     def manhattan_heuristic(self, state):
         """
@@ -101,15 +131,15 @@ class PathFinding:
         """
         return self.manhattan_distance(state, self.goal_state)
 
-    def manhattan_distance(self, state1, state2):
+    def manhattan_distance(self, state_1, state_2):
         """
-        Calculates the Manhattan distance between state1 (x1, y1) and state2 (x2, y2)
+        Calculates the Manhattan distance between state_1 (x1, y1) and state_2 (x2, y2)
 
-        :param state1: first ordered pair in the form (x1, y1)
-        :param state2: second ordered pair in the form (x2, y2)
+        :param state_1: first ordered pair in the form (x1, y1)
+        :param state_2: second ordered pair in the form (x2, y2)
         :return: the Manhattan distance between the states.
         """
-        return abs(state1[0] - state2[0]) + abs(state1[1] - state2[1])
+        return abs(state_1[0] - state_2[0]) + abs(state_1[1] - state_2[1])
 
     def chebyshev_heuristic(self, state):
         """
@@ -121,53 +151,73 @@ class PathFinding:
         """
         return self.chebyshev_distance(state, self.goal_state)
 
-    def chebyshev_distance(self, state1, state2):
+    def chebyshev_distance(self, state_1, state_2):
         """
-        Calculates the Chebyshev distance between state1 (x1, y1) and state2 (x2, y2)
+        Calculates the Chebyshev distance between state_1 (x1, y1) and state_2 (x2, y2)
 
-        :param state1: first ordered pair in the form (x1, y1)
-        :param state2: second ordered pair in the form (x2, y2)
+        :param state_1: first ordered pair in the form (x1, y1)
+        :param state_2: second ordered pair in the form (x2, y2)
         :return: the Chebyshev distance between the states.
         """
-        return max(abs(state1[0] - state2[0]), abs(state1[1] - state2[1]))
+        return max(abs(state_1[0] - state_2[0]), abs(state_1[1] - state_2[1]))
 
-    def get_open_neighbors_up_down(self, state):
+    def get_open_neighbours_up_down(self, state):
         """
-        Find open neighbors for the state state
+        Find open neighbours for the state.
+        A neighbours is a state that is in the direction up, down, left or right of the given state.
         :return: a list of open neighbors for state point
         """
-        all_neighbors = [(state[0] - 1, state[1]),
-                         (state[0] + 1, state[1]),
-                         (state[0], state[1] - 1),
-                         (state[0], state[1] + 1)]
+        # todo: maybe need to check boundaries, if there is no wall around the state.
+        row = state[0]
+        col = state[1]
+        neighbours = [(row - 1, col),  # left
+                      (row + 1, col),  # right
+                      (row, col - 1),  # up
+                      (row, col + 1)]  # down
 
-        open_neighbors = []
-        for neighbour in all_neighbors:
-            if self.is_open(neighbour):
-                open_neighbors.append(neighbour)
-        return open_neighbors
+        return list(filter(lambda neighbour: self.is_open(neighbour), neighbours))
 
-    def is_adjacent_by_manhattan(self, state1, state2):
+    def get_open_neighbours_diagonal(self, state):
+        """
+        Find open neighbors for the state state.
+        A neighbours is a state that is in the direction up, down, left or right or diagonally adjacent of the given state.
+        :return: a list of open neighbors for state point
+        """
+        # todo: maybe need to check boundaries, if there is no wall around the state.
+        row = state[0]
+        col = state[1]
+        neighbours = [(row - 1, col),  # left
+                      (row + 1, col),  # right
+                      (row, col - 1),  # up
+                      (row, col + 1),  # down
+                      (row - 1, col - 1),  # top left
+                      (row - 1, col + 1),  # top right
+                      (row + 1, col - 1),  # bottom left
+                      (row + 1, col + 1)]  # bottom right
+
+        return list(filter(lambda neighbour: self.is_open(neighbour), neighbours))
+
+    def is_adjacent_by_manhattan(self, state_1, state_2):
         """
         Determines whether two states are adjacent calculated by Manhattan distance.
         The are adjacent if the Manhattan distance is 1.
 
-        :param state1: first ordered pair in the form (x1, y1)
-        :param state2: second ordered pair in the form (x2, y2)
+        :param state_1: first ordered pair in the form (x1, y1)
+        :param state_2: second ordered pair in the form (x2, y2)
         :return: True if they are adjacent by Manhattan distance, False is they are not adjacent.
         """
-        return self.manhattan_distance(state1, state2) == 1
+        return self.manhattan_distance(state_1, state_2) == 1
 
-    def is_adjacent_by_chebyshev(self, state1, state2):
+    def is_adjacent_by_chebyshev(self, state_1, state_2):
         """
         Determines whether two states are adjacent calculated by Chebyshev distance.
         The are adjacent if the Chebyshev distance is 1.
 
-        :param state1: first ordered pair in the form (x1, y1)
-        :param state2: second ordered pair in the form (x2, y2)
+        :param state_1: first ordered pair in the form (x1, y1)
+        :param state_2: second ordered pair in the form (x2, y2)
         :return: True if they are adjacent by Chebyshev distance, False is they are not adjacent.
         """
-        return self.chebyshev_distance(state1, state2) == 1
+        return self.chebyshev_distance(state_1, state_2) == 1
 
     def is_goal(self, state):
         """
@@ -194,25 +244,23 @@ class PathFinding:
         """
         return self.maze[state[0]][state[1]] == 'X'
 
-    def get_result_maze(self, path):
+    def get_result_maze(self, path_map):
         """
         Modify the maze such that the path taken between start and goal state is marked by 'P'.
-        :param path: a list of ordered pairs containing states of the path.
+        :param path_map: a map from states to their previous state
         :return: The maze with the path taken marked by 'P'
         """
-        # todo: remove basic error checks
-        # do some basic error checking of the result path here
-        # if not self.is_adjacent_by_chebyshev(path[0][0], path[0][1], self.start_state[0], self.start_state[1]):
-        #     print('Error 1: Some error must have occurred.')
-        # if not self.is_adjacent_by_chebyshev(path[len(path)-1][0], path[len(path)-1][1],
-        #                                      self.goal_state[0], self.goal_state[1]):
-        #     print('Error 2: Some error must have occurred.')
-        # for i in range(len(path) - 1):
-        #     if not self.is_adjacent_by_chebyshev(path[i][0], path[i][1], path[i+1][0], path[i+1][1]):
-        #         print('Error 3: Some error must have occurred.')
-
-        for position in path:
-            self.maze[position[0]][position[1]] = 'P'
+        current_state = self.goal_state
+        while current_state != self.start_state:
+            if current_state in path_map:
+                previous_state = path_map[current_state]
+                self.maze[previous_state[0]][previous_state[1]] = 'P'
+                current_state = previous_state
+            else:
+                print('Error 01: unexpected error after all algorithms are correctly implemented.')
+                break
+        # set the start state back to 'S' since it was set to 'P' when reconstructing path.
+        self.maze[self.start_state[0]][self.start_state[1]] = 'S'
         return self.maze
 
 
@@ -300,24 +348,27 @@ def main():
         print("Finding solutions to mazes when allowed to move up, down, left and right.")
         for i in range(num_input_mazes_up_down):
             maze = input_mazes_up_down[i]
-            path_finding_up_down = PathFinding(maze)
-            print("Finding a solution for maze number", i, "with dimension", len(maze), "by", len(maze[0]))
+            m = len(maze)
+            n = len(maze[0])
+            print("Finding a solution for maze number", i, "with dimension", m, "by", n)
+            path_finding_up_down_greedy = PathFinding(copy.deepcopy(maze))
             st = time.time()
             # call the algorithm to get path
-            path_up_down_greedy = path_finding_up_down.greedy_search_up_down()
+            path_up_down_greedy = path_finding_up_down_greedy.greedy_search_up_down()
             # generate result maze from path
-            result_maze = path_finding_up_down.get_result_maze(path_up_down_greedy)
+            result_maze = path_finding_up_down_greedy.get_result_maze(path_up_down_greedy)
             # write algorithm name to file
             append_line_to_file('Greedy', output_file_name_up_down)
             # write maze to file
             write_to_file(result_maze, output_file_name_up_down)
             print("    the time used for greedy algorithm is", time.time() - st)
 
+            path_finding_up_down_a_star = PathFinding(copy.deepcopy(maze))
             st = time.time()
             # call the algorithm to get path
-            path_up_down_a_star = path_finding_up_down.a_star_search_up_down()
+            path_up_down_a_star = path_finding_up_down_a_star.a_star_search_up_down()
             # generate result maze from path
-            result_maze = path_finding_up_down.get_result_maze(path_up_down_a_star)
+            result_maze = path_finding_up_down_a_star.get_result_maze(path_up_down_a_star)
             # write algorithm name to file
             append_line_to_file('A*', output_file_name_up_down)
             # write maze to file
@@ -334,24 +385,28 @@ def main():
         print("Finding solutions to mazes when also allowed to move diagonally.")
         for i in range(num_input_mazes_diagonal):
             maze = input_mazes_diagonal[i]
-            path_finding_diagonal = PathFinding(maze)
-            print("Finding a solution for maze number", i, "with dimension", len(maze), "by", len(maze[0]))
+            m = len(maze)
+            n = len(maze[0])
+            print("Finding a solution for maze number", i, "with dimension", m, "by", n)
+            path_finding_diagonal_greedy = PathFinding(copy.deepcopy(maze))
             st = time.time()
             # call the algorithm to get path
-            path_diagonal_greedy = path_finding_diagonal.greedy_search_diagonal()
+            path_diagonal_greedy = path_finding_diagonal_greedy.greedy_search_diagonal()
             # generate result maze from path
-            result_maze = path_finding_diagonal.get_result_maze(path_diagonal_greedy)
+            result_maze = path_finding_diagonal_greedy.get_result_maze(path_diagonal_greedy)
             # write algorithm name to file
             append_line_to_file('Greedy', output_file_name_diagonal)
             # write maze to file
             write_to_file(result_maze, output_file_name_diagonal)
             print("    the time used for greedy algorithm is", time.time() - st)
 
+            # todo: find out why it doesn't work if shallow copied
+            path_finding_diagonal_a_star = PathFinding(copy.deepcopy(maze))
             st = time.time()
             # call the algorithm to get path
-            path_diagonal_a_star = path_finding_diagonal.a_star_search_diagonal()
+            path_diagonal_a_star = path_finding_diagonal_a_star.a_star_search_diagonal()
             # generate result maze from path
-            result_maze = path_finding_diagonal.get_result_maze(path_diagonal_a_star)
+            result_maze = path_finding_diagonal_a_star.get_result_maze(path_diagonal_a_star)
             # write algorithm name to file
             append_line_to_file('A*', output_file_name_diagonal)
             # write maze to file
