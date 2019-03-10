@@ -6,7 +6,7 @@ import time
 class PathFinding:
     def __init__(self, maze):
         self.maze = maze
-        self.start_state = None  # represented by an ordered pair (x, y)
+        self.start_state = None  # represented by an ordered pair (x, y) as a tuple
         self.goal_state = None
         self.initialize_start_goal_states()
 
@@ -97,8 +97,10 @@ class PathFinding:
             if self.is_goal(current_state):
                 break
             for next_state in self.get_open_neighbours_diagonal(current_state):
+                # print('ck1', current, next_state)
                 if next_state not in came_from:
                     priority = self.chebyshev_heuristic(next_state)
+                    # print('ck2: priority for next_state', priority)
                     heapq.heappush(frontier, (priority, next_state))
                     came_from[next_state] = current_state
         return came_from
@@ -276,6 +278,7 @@ class PathFinding:
 
 
 def read_file(file_name):
+    # todo: error when leading line is blank
     file = open(file_name, 'r')
     input_lines = [list(line.rstrip('\n')) for line in file]
     mazes = []
