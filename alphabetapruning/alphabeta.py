@@ -126,13 +126,11 @@ def main():
     output_file = open('alphabeta_out.txt', 'w')
     # print(input_data_in_string)
     i = 0
-    graph_list = []
     while i < len(input_data_in_string):
         nodes_examined = 0
         # Every two lists in input_data_in_string consists of: list of nodes, list of edges
         graph = create_graph(input_data_in_string[i], input_data_in_string[i+1])
         # print_tree(graph)
-        graph_list.append(graph)
         score = alpha_beta(graph, float('-inf'), float('inf'))
         # print(score, nodes_examined)
         output_file.write('Graph {}: Score: {}; Leaf Nodes Examined: {} \n'.format(i // 2 + 1, score, nodes_examined))
