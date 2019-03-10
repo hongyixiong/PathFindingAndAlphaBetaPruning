@@ -64,7 +64,25 @@ class PathFinding:
                  then the path should be [(x_3, y_3), (x_2, y_2), x_1, y_1)]
         :return: a map from state to which state it came from.
         """
+        frontier = []
+        heapq.heappush(frontier, (0, self.start_state))
         came_from = dict()
+        cost_so_far = dict()
+        came_from[self.start_state] = None
+        cost_so_far[self.start_state] = 0
+
+        while len(frontier) > 0:
+            current = heapq.heappop(frontier)
+            current_state = current[1]
+            if self.is_goal(current_state):
+                break
+            for next_state in self.get_open_neighbours_up_down(current_state):
+                new_cost = cost_so_far[current_state] + 1
+                if next_state not in cost_so_far or new_cost < cost_so_far[next_state]:
+                    cost_so_far[next_state] = new_cost
+                    priority = new_cost + self.manhattan_heuristic(next_state)
+                    heapq.heappush(frontier, (priority, next_state))
+                    came_from[next_state] = current_state
         return came_from
 
     def greedy_search_diagonal(self):
@@ -351,17 +369,17 @@ def main():
             m = len(maze)
             n = len(maze[0])
             print("Finding a solution for maze number", i, "with dimension", m, "by", n)
-            path_finding_up_down_greedy = PathFinding(copy.deepcopy(maze))
-            st = time.time()
-            # call the algorithm to get path
-            path_up_down_greedy = path_finding_up_down_greedy.greedy_search_up_down()
-            # generate result maze from path
-            result_maze = path_finding_up_down_greedy.get_result_maze(path_up_down_greedy)
-            # write algorithm name to file
-            append_line_to_file('Greedy', output_file_name_up_down)
-            # write maze to file
-            write_to_file(result_maze, output_file_name_up_down)
-            print("    the time used for greedy algorithm is", time.time() - st)
+##            path_finding_up_down_greedy = PathFinding(copy.deepcopy(maze))
+##            st = time.time()
+##            # call the algorithm to get path
+##            path_up_down_greedy = path_finding_up_down_greedy.greedy_search_up_down()
+##            # generate result maze from path
+##            result_maze = path_finding_up_down_greedy.get_result_maze(path_up_down_greedy)
+##            # write algorithm name to file
+##            append_line_to_file('Greedy', output_file_name_up_down)
+##            # write maze to file
+##            write_to_file(result_maze, output_file_name_up_down)
+##            print("    the time used for greedy algorithm is", time.time() - st)
 
             path_finding_up_down_a_star = PathFinding(copy.deepcopy(maze))
             st = time.time()
