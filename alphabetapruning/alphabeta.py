@@ -1,6 +1,7 @@
 from collections import deque
 nodes_examined = 0
 
+
 class GraphNode:
     def __init__(self, name, type):
         self.name = name
@@ -12,6 +13,7 @@ class GraphNode:
 
     def __str__(self):
         return '{}, {}'.format(self.name, self.type)
+
 
 # returns a list of list
 def read_input(file_name):
@@ -118,6 +120,7 @@ def alpha_beta(current_node, alpha, beta):
 
 def main():
     global nodes_examined
+    # NAME OF INPUT FILE HERE
     input_file_name = 'alphabeta.txt'
     input_data_in_string = read_input(input_file_name)
     output_file = open('alphabeta_out.txt', 'w')
