@@ -78,6 +78,7 @@ def create_graph(nodes, edges):
     return graphnodes[nodes[0][0]]
 
 
+# print the input graph in a nice format
 def print_tree(tree):
     # BFS through tree to print
     queue = deque()
@@ -94,6 +95,7 @@ def print_tree(tree):
             if type(node) != int:
                 for child in node.children:
                     queue.append(child)
+
 
 def alpha_beta(current_node, alpha, beta):
     global nodes_examined
@@ -114,24 +116,24 @@ def alpha_beta(current_node, alpha, beta):
         return beta
 
 
-
-
 def main():
     global nodes_examined
     input_file_name = 'alphabeta.txt'
     input_data_in_string = read_input(input_file_name)
-    print(input_data_in_string)
+    output_file = open('alphabeta_out.txt', 'w')
+    # print(input_data_in_string)
     i = 0
     graph_list = []
     while i < len(input_data_in_string):
         nodes_examined = 0
         # Every two lists in input_data_in_string consists of: list of nodes, list of edges
         graph = create_graph(input_data_in_string[i], input_data_in_string[i+1])
-        i += 2
-        print_tree(graph)
+        # print_tree(graph)
         graph_list.append(graph)
         score = alpha_beta(graph, float('-inf'), float('inf'))
-        print(score, nodes_examined)
+        # print(score, nodes_examined)
+        output_file.write('Graph {}: Score: {}; Leaf Nodes Examined: {} \n'.format(i // 2 + 1, score, nodes_examined))
+        i += 2
 
 
 main()
