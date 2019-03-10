@@ -1,18 +1,17 @@
 from collections import deque
-
+nodes_examined = 0
 
 class GraphNode:
     def __init__(self, name, type):
         self.name = name
         self.type = type
-        self.children = set()
+        self.children = []
 
     def add_child(self, child):
-        self.children.add(child)
+        self.children.append(child)
 
     def __str__(self):
         return '{}, {}'.format(self.name, self.type)
-
 
 # returns a list of list
 def read_input(file_name):
@@ -31,7 +30,7 @@ def read_input(file_name):
                 input_list.append(curr_list)
                 curr_list = []
             # reached the name of a node
-            elif ch.isalnum():
+            elif ch.isalnum() or ch == "-":
                 # if we are currently reading the name of a node, add to the node
                 if name_node:
                     curr_tup[0] += ch
@@ -96,17 +95,43 @@ def print_tree(tree):
                 for child in node.children:
                     queue.append(child)
 
+def alpha_beta(current_node, alpha, beta):
+    global nodes_examined
+    if type(current_node) == int:
+        nodes_examined += 1
+        return current_node
+    elif current_node.type == "MAX":
+        for child in current_node.children:
+            alpha = max(alpha, alpha_beta(child, alpha, beta))
+            if alpha >= beta:
+                break
+        return alpha
+    elif current_node.type == "MIN":
+        for child in current_node.children:
+            beta = min(beta, alpha_beta(child, alpha, beta))
+            if beta <= alpha:
+                break
+        return beta
+
+
+
 
 def main():
+    global nodes_examined
     input_file_name = 'alphabeta.txt'
     input_data_in_string = read_input(input_file_name)
     print(input_data_in_string)
     i = 0
+    graph_list = []
     while i < len(input_data_in_string):
+        nodes_examined = 0
         # Every two lists in input_data_in_string consists of: list of nodes, list of edges
         graph = create_graph(input_data_in_string[i], input_data_in_string[i+1])
         i += 2
         print_tree(graph)
+        graph_list.append(graph)
+        score = alpha_beta(graph, float('-inf'), float('inf'))
+        print(score, nodes_examined)
 
 
 main()
