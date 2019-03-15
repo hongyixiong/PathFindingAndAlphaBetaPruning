@@ -42,7 +42,8 @@ class PathFinding:
             current_state = current[1]
             if self.is_goal(current_state):
                 break
-            for next_state in self.get_open_neighbours_up_down(current_state):
+            open_neighbours = self.get_open_neighbours_up_down(current_state)
+            for next_state in open_neighbours:
                 if next_state not in came_from:
                     priority = self.manhattan_heuristic(next_state)
                     heapq.heappush(frontier, (priority, next_state))
@@ -69,7 +70,8 @@ class PathFinding:
             current_state = current[1]
             if self.is_goal(current_state):
                 break
-            for next_state in self.get_open_neighbours_up_down(current_state):
+            open_neighbours = self.get_open_neighbours_up_down(current_state)
+            for next_state in open_neighbours:
                 new_cost = cost_so_far[current_state] + 1
                 if next_state not in cost_so_far or new_cost < cost_so_far[next_state]:
                     cost_so_far[next_state] = new_cost
@@ -96,7 +98,8 @@ class PathFinding:
             current_state = current[1]
             if self.is_goal(current_state):
                 break
-            for next_state in self.get_open_neighbours_diagonal(current_state):
+            open_neighbours = self.get_open_neighbours_diagonal(current_state)
+            for next_state in open_neighbours:
                 # print('ck1', current, next_state)
                 if next_state not in came_from:
                     priority = self.chebyshev_heuristic(next_state)
@@ -125,7 +128,8 @@ class PathFinding:
             current_state = current[1]
             if self.is_goal(current_state):
                 break
-            for next_state in self.get_open_neighbours_diagonal(current_state):
+            open_neighbours = self.get_open_neighbours_diagonal(current_state)
+            for next_state in open_neighbours:
                 new_cost = cost_so_far[current_state] + 1
                 if next_state not in cost_so_far or new_cost < cost_so_far[next_state]:
                     cost_so_far[next_state] = new_cost
@@ -270,7 +274,7 @@ class PathFinding:
                 self.maze[previous_state[0]][previous_state[1]] = 'P'
                 current_state = previous_state
             else:
-                print('Error 01: unexpected error after all algorithms are correctly implemented.')
+                print('    There is no solution for this maze.')
                 break
         # set the start state back to 'S' since it was set to 'P' when reconstructing path.
         self.maze[self.start_state[0]][self.start_state[1]] = 'S'
@@ -278,14 +282,14 @@ class PathFinding:
 
 
 def read_file(file_name):
-    # todo: error when leading line is blank
     file = open(file_name, 'r')
     input_lines = [list(line.rstrip('\n')) for line in file]
     mazes = []
     maze = []
     for line in input_lines:
         if not line:
-            mazes.append(maze)
+            if len(maze) > 0:
+                mazes.append(maze)
             maze = []
         else:
             maze.append(line)
