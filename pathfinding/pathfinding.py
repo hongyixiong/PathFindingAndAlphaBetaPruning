@@ -182,7 +182,6 @@ class PathFinding:
         A neighbours is a state that is in the direction up, down, left or right of the given state.
         :return: a list of open neighbours for state point
         """
-        # todo: maybe need to check boundaries, if there is no wall around the maze.
         row = state[0]
         col = state[1]
         neighbours = [(row - 1, col),  # left
@@ -198,7 +197,6 @@ class PathFinding:
         A neighbours is a state that is in the direction up, down, left or right or diagonally adjacent of the given state.
         :return: a list of open neighbours for state point
         """
-        # todo: maybe need to check boundaries, if there is no wall around the maze.
         row = state[0]
         col = state[1]
         neighbours = [(row - 1, col),  # left
