@@ -418,7 +418,6 @@ def main():
             write_to_file(result_maze, output_file_name_diagonal)
             print("    the time used for greedy algorithm is", time.time() - st)
 
-            # todo: find out why it doesn't work if shallow copied
             path_finding_diagonal_a_star = PathFinding(copy.deepcopy(maze))
             st = time.time()
             # call the algorithm to get path
