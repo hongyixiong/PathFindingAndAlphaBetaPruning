@@ -116,6 +116,8 @@ def alpha_beta(current_node, alpha, beta):
             if beta <= alpha:
                 break
         return beta
+    else:
+        print('Error 01: an unexpected error has occurred.')
 
 
 def main():

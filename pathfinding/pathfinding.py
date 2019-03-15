@@ -100,10 +100,8 @@ class PathFinding:
                 break
             open_neighbours = self.get_open_neighbours_diagonal(current_state)
             for next_state in open_neighbours:
-                # print('ck1', current, next_state)
                 if next_state not in came_from:
                     priority = self.chebyshev_heuristic(next_state)
-                    # print('ck2: priority for next_state', priority)
                     heapq.heappush(frontier, (priority, next_state))
                     came_from[next_state] = current_state
         return came_from
@@ -182,9 +180,9 @@ class PathFinding:
         """
         Find open neighbours for the state.
         A neighbours is a state that is in the direction up, down, left or right of the given state.
-        :return: a list of open neighbors for state point
+        :return: a list of open neighbours for state point
         """
-        # todo: maybe need to check boundaries, if there is no wall around the state.
+        # todo: maybe need to check boundaries, if there is no wall around the maze.
         row = state[0]
         col = state[1]
         neighbours = [(row - 1, col),  # left
@@ -198,9 +196,9 @@ class PathFinding:
         """
         Find open neighbors for the state state.
         A neighbours is a state that is in the direction up, down, left or right or diagonally adjacent of the given state.
-        :return: a list of open neighbors for state point
+        :return: a list of open neighbours for state point
         """
-        # todo: maybe need to check boundaries, if there is no wall around the state.
+        # todo: maybe need to check boundaries, if there is no wall around the maze.
         row = state[0]
         col = state[1]
         neighbours = [(row - 1, col),  # left
@@ -347,10 +345,10 @@ def print_list_3d(lis_3d):
 
 
 def main():
-    input_file_name_up_down = 'path_finding_a.txt'
-    input_file_name_diagonal = 'path_finding_b.txt'
-    output_file_name_up_down = 'path_finding_a_out.txt'
-    output_file_name_diagonal = 'path_finding_b_out.txt'
+    input_file_name_up_down = 'pathfinding_a.txt'
+    input_file_name_diagonal = 'pathfinding_b.txt'
+    output_file_name_up_down = 'pathfinding_a_out.txt'
+    output_file_name_diagonal = 'pathfinding_b_out.txt'
 
     # open and then close the output file with w+ so that the file starts empty
     file = open(output_file_name_up_down, 'w+')
@@ -363,7 +361,7 @@ def main():
     if num_input_mazes_up_down == 0:
         print("No input mazes for agent to be allowed to only move up, down, left and right.")
     else:
-        print("Finding solutions to mazes when allowed to move up, down, left and right.")
+        print("Finding solutions to mazes when allowed to move up, down, left and right:")
         for i in range(num_input_mazes_up_down):
             maze = input_mazes_up_down[i]
             m = len(maze)
@@ -400,7 +398,7 @@ def main():
     if num_input_mazes_diagonal == 0:
         print("No input maze fow agent to be allowed to also move diagonally.")
     else:
-        print("Finding solutions to mazes when also allowed to move diagonally.")
+        print("Finding solutions to mazes when also allowed to move diagonally:")
         for i in range(num_input_mazes_diagonal):
             maze = input_mazes_diagonal[i]
             m = len(maze)

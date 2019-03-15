@@ -58,8 +58,8 @@ def write_to_file(lis_2d, file_name):
 
 
 def write_new_maze_to_input_files(m, n, blocked_probability):
-    input_file_name_up_down = 'path_finding_a.txt'
-    input_file_name_diagonal = 'path_finding_b.txt'
+    input_file_name_up_down = 'pathfinding_a.txt'
+    input_file_name_diagonal = 'pathfinding_b.txt'
     empty_string = ''
 
     maze = create_maze(m, n, blocked_probability)
@@ -75,10 +75,10 @@ def clear_content_of_file(file_name):
 
 
 def main():
-    input_file_name_up_down = 'path_finding_a.txt'
-    input_file_name_diagonal = 'path_finding_b.txt'
-    output_file_name_up_down = 'path_finding_a_out.txt'
-    output_file_name_diagonal = 'path_finding_b_out.txt'
+    input_file_name_up_down = 'pathfinding_a.txt'
+    input_file_name_diagonal = 'pathfinding_b.txt'
+    output_file_name_up_down = 'pathfinding_a_out.txt'
+    output_file_name_diagonal = 'pathfinding_b_out.txt'
 
     # The following two lines is for clearing existing mazes in input files.
     # Comment out the following two lines out if you want to append a new maze.
